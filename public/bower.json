@@ -1,0 +1,23 @@
+{
+  "name": "bollito",
+  "version": "0.0.1",
+  "homepage": "https://github.com/isijara/bollito-counter",
+  "authors": [
+    "Ramón Isijara <risijara@gmail.com>"
+  ],
+  "description": "Aplicación para contar mis días sin bollito y sin identidad propia",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular-route": "~1.4.7",
+    "bootstrap": "~3.3.5",
+    "angularjs": "~1.4.7"
+  }
+}
