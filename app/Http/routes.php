@@ -14,3 +14,8 @@
 Route::get('/', function () {
     return view('bollito');
 });
+
+
+Route::get('/counter', function () {
+    return json_encode(['counter' => 59]);
+});
