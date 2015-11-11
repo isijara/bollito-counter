@@ -15,6 +15,23 @@
 </head>
 <body ng-app="bollito">
 
+  <nav class="navbar navbar-inverse">
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+
+      <center>
+        <a class="navbar-brand" href="#/">
+          El precio de un bollo
+        </a>
+      </center>
+
+    </div>
+
+
+  </div><!-- /.container-fluid -->
+</nav>
+
     <div class="container" ng-view></div>
 
 </body>
