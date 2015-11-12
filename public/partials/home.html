@@ -1,10 +1,13 @@
 <div ng-init="getCounter()">
 
-
-
-
     <div class="row">
 
+
+        <div class="progress col-md-12 col-xs-12 col-lg-12">
+          <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: {{(60-counter)*100/60}}%">
+            <span class="sr-only">40% Complete (success)</span>
+          </div>
+        </div>
 
         <div class="col-md-6 col-xs-12 jumbotron" >
 
@@ -22,6 +25,7 @@
 
         </div>
 
+
         <div class="col-md-6 col-xs-12 jumbotron" >
             <h1>
                 <center>
@@ -34,6 +38,21 @@
                     Días sin bollito
                 </center>
             </h3>
+        </div>
+
+
+    </div>
+
+
+    <div class="row">
+
+        <div class="row col-md-6">
+            <span  ng-repeat="row in cells track by $index" class="row col-xs-12 col-md-12 {{$index}}">
+
+                <button  ng-repeat="cell in row" class="row col-xs-4 col-md-4 btn btn-success" ng-click="assign(cell, 'weps')">
+                    {{cell.content}}
+                </button>
+            </span>
         </div>
 
     </div>
