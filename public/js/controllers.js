@@ -48,6 +48,7 @@
         window.scope = $scope;
 
         $scope.boardSize = 14;
+        $scope.cellWidth = 100/$scope.boardSize;
 
         $scope.Buscaminas = function (size) {
 
@@ -142,7 +143,7 @@
             Board.prototype.playCell = function() {
                 if(this.isValidCell(x, y)) {
                     if(this.board[x][y].blocked())
-                        if(this.board[x][y].getValue() == 0) {
+                        if(this.board[x][y].getValue() === 0) {
                             this.board[x][y].play();
                             this.playCell(x+1, y);
                             this.playCell(x+1, y+1);
