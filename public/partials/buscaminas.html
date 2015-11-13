@@ -1,0 +1,16 @@
+
+
+    <div class="btn-toolbar">
+        <div ng-repeat="cells in board.cells" class="col-md-12 btn-group" role="group">
+
+            <button  ng-repeat="cell in cells" class="row col-xs-1 col-md-1 btn btn-lg btn-default" ng-click="cell.play('p1') ">
+                        <span ng-hide="cell.blocked" >
+                            {{cell.label || cell.value}}
+                        </span>
+
+                        <span ng-hide="!cell.blocked" >
+                            ·
+                        </span>
+            </button>
+        </div>
+    </div>
