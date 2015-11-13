@@ -19,6 +19,7 @@
     "angular-route": "~1.4.7",
     "bootstrap": "~3.3.5",
     "angularjs": "~1.4.7",
-    "angular-resource": "~1.4.7"
+    "angular-resource": "~1.4.7",
+    "angular-socket-io": "~0.7.0"
   }
 }
