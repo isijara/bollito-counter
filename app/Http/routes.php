@@ -17,5 +17,5 @@ Route::get('/', function () {
 
 
 Route::get('/counter', function () {
-    return json_encode(['counter' => 58]);
+    return json_encode(['counter' => 57]);
 });

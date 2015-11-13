@@ -7,6 +7,10 @@ app.config(['$routeProvider', function($routeProvider) {
             templateUrl: 'partials/home.html',
             controller: 'homeController'
         }).
+        when('/buscaminas', {
+            templateUrl:    'partials/buscaminas.html',
+            controller:     'buscaminasController'
+        }).
         otherwise({
             redirectTo: '/'
         });
