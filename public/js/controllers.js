@@ -47,23 +47,29 @@
 
         window.scope = $scope;
 
-        $scope.boardSize = 14;
-        $scope.cellWidth = 100/$scope.boardSize;
+
+
 
         $scope.Buscaminas = function (size) {
 
             var self = this;
+            $scope.boardSize = size;
+            $scope.cellWidth = 100/$scope.boardSize;
 
             $scope.unlockCell = function  (cell) {
                 cell.blocked = false;
             };
 
-            var Cell = function () {
-                this.player  = '';
-                this.value   = 0;
-                this.label   = null;
-                this.isBomb  = false;
-                this.blocked = true;
+            var Cell = function (coordinateX, coordinateY) {
+                this.player         = '';
+                this.value          = 0;
+                this.label          = null;
+                this.isBomb         = false;
+                this.blocked        = true;
+                this.coordinateX    = coordinateX;
+                this.coordinateY    = coordinateY;
+                this.classType      = 'btn-default';
+                this.fontColor      = '';
 
 
                 Cell.prototype.setBomb = function () {
@@ -73,22 +79,68 @@
                 };
 
                 Cell.prototype.setBomb = function () {
-
                     this.label = '@';
                     this.isBomb = true;
+                };
+
+                Cell.prototype.getCoordinateX = function() {
+                    return this.coordinateX;
+                };
+
+                Cell.prototype.getCoordinateY = function() {
+                    return this.coordinateY;
                 };
 
                 Cell.prototype.play = function(player) {
                     this.player = player;
                     this.blocked = false;
+                    if(this.getValue() === 0 && !this.isBomb) {
+                        this.classType = 'btn-info';
+                    }
+
+                    if(this.isBomb && player == 'p1') {
+                        this.classType = 'btn-danger';
+                    }
+
+                    this.setFontColor();
+
                 };
 
                 Cell.prototype.setGuide = function() {
+                    if(!this.isBomb)
                         this.value +=  1;
+
                 };
 
                 Cell.prototype.getValue = function() {
                     return this.value;
+                };
+
+                Cell.prototype.setFontColor = function() {
+
+                    if(!this.isBomb && this.value === 0) {
+                        this.fontColor = 'water';
+                    }
+                    switch(this.value) {
+
+
+                        case 1:
+                            this.fontColor = 'blue';
+                            break;
+                        case 2:
+                            this.fontColor = 'green';
+                            break;
+                        case 3:
+                            this.fontColor = 'red';
+                            break;
+                        case 4:
+                            this.fontColor = 'blue';
+                            break;
+                        case 5:
+                            this.fontColor = 'blue';
+                            break;
+
+                    }
                 };
             };
 
@@ -97,14 +149,12 @@
                 var self = this;
                     self.size = size;
                     self.cells = [];
-                    self.totalBombs = (self.size*self.size/4);
-
-                console.log(self.cells);
+                    self.totalBombs = 49;//(self.size*self.size/8);
 
                 for(var i=0; i<self.size; i++) {
                     self.cells[i] = [];
                     for(var j=0; j<self.size; j++) {
-                        self.cells[i][j] = new Cell();
+                        self.cells[i][j] = new Cell(i,j);
                     }
                 }
             };
@@ -123,7 +173,6 @@
                         totalBombs--;
                     }
                 }
-                console.log('Finish');
             };
 
             Board.prototype.addBoardGuide = function() {
@@ -140,20 +189,118 @@
                         }
             };
 
-            Board.prototype.playCell = function() {
-                if(this.isValidCell(x, y)) {
-                    if(this.board[x][y].blocked())
-                        if(this.board[x][y].getValue() === 0) {
-                            this.board[x][y].play();
-                            this.playCell(x+1, y);
-                            this.playCell(x+1, y+1);
-                            this.playCell(x+1, y-1);
-                            this.playCell(x-1, y);
-                            this.playCell(x, y-1);
-                            this.playCell(x, y+1);
+            Board.prototype.playCell = function(cell, player) {
+                var x = cell.getCoordinateX(),
+                    y = cell.getCoordinateY();
+
+                if (this.isValidCell(x, y)) {
+                    if(cell.blocked)
+                        if(cell.getValue() === 0 && !cell.isBomb) {
+                            cell.play(player);
+                            var cells = this.getAdyacentCells(cell);
+                            for(var index in cells) {
+                                var adyacentCell = cells[index];
+                                if (adyacentCell.getValue() === 0)
+                                    this.playCell(adyacentCell, player);
+                            }
+
                         } else
-                            this.board[x][y].play();
+                            cell.play(player);
                 }
+            };
+
+            Board.prototype.getCell = function(x,y) {
+                return this.cells[x][y];
+            };
+
+            Board.prototype.getAdyacentCells = function(cell) {
+                var adyacentCells = [];
+                var i = cell.getCoordinateX();
+                var y = cell.getCoordinateY();
+                var celda = {};
+
+
+                if ( this.isValidCell( i+1, y   ) ) {
+                        celda = this.cells[i+1][ y ];
+                        adyacentCells.push(celda) ;
+
+                    }
+
+                if ( this.isValidCell( i+1, y   ) ) {
+                    celda = this.cells[i+1][ y ];
+                    adyacentCells.push(celda) ;
+
+                }
+
+                if ( this.isValidCell( i+1, y+1 ) ) {
+                    celda = this.cells[i+1][y+1];
+                    adyacentCells.push(celda);
+                }
+
+
+                if ( this.isValidCell( i+1, y-1 ) )  {
+                    celda = this.cells[i+1][y-1];
+                    adyacentCells.push(celda);
+                }
+
+                if ( this.isValidCell( i  , y-1 ) ) {
+                    celda = this.getCell( i , y-1 );
+                    adyacentCells.push(celda);
+
+                }
+
+                if ( this.isValidCell( i  , y+1 ) ) {
+                    celda = this.getCell( i , y+1 );
+                    adyacentCells.push(celda);
+                }
+
+                if ( this.isValidCell( i-1  , y+1   ) ) {
+                    celda = this.cells[ i-1 ][ y+1 ];
+                    adyacentCells.push(celda);
+                 }
+
+
+                if ( this.isValidCell( i-1  , y-1   ) ) {
+                    celda = this.cells[ i-1 ][ y-1 ];
+                    adyacentCells.push( celda) ;
+                }
+
+                if ( this.isValidCell( i-1  , y   ) ) {
+                    celda = this.cells[i-1][ y ];
+
+                    if(celda === undefined)
+                        console.log('undefined');
+
+                    adyacentCells.push(celda) ;
+                }
+
+                // if ( this.isValidCell( i+1, y   ) ) adyacentCells.push(this.cells[i+1][ y ]) ;
+                // if ( this.isValidCell( i+1, y+1 ) ) adyacentCells.push(this.cells[i+1][y+1]) ;
+                // if ( this.isValidCell( i+1, y-1 ) ) adyacentCells.push(this.cells[i+1][y-1]) ;
+
+                // if ( this.isValidCell( i  , y-1 ) ) adyacentCells.push(this.cells[ i ][y-1]) ;
+                // if ( this.isValidCell( i  , y+1 ) ) adyacentCells.push(this.cells[ i ][y+1]) ;
+
+
+                // if ( this.isValidCell( i-1  , y+1   ) ) adyacentCells.push(this.cells[ i-1 ][ y+1 ]) ;
+                // if ( this.isValidCell( i-1  , y-1   ) ) adyacentCells.push(this.cells[ i-1 ][ y-1 ]) ;
+                // if ( this.isValidCell( i-1  , y   ) ) adyacentCells.push(this.cells[i-1][ y ]) ;
+
+
+                /********/
+                // if ( this.isValidCell( i+1, y   ) ) adyacentCells.push(this.cells[i+1][ y ]) ;
+                // if ( this.isValidCell( i+1, y+1 ) ) adyacentCells.push(this.cells[i+1][y+1]) ;
+                // if ( this.isValidCell( i-1, y   ) ) adyacentCells.push(this.cells[i-1][ y ]) ;
+                // if ( this.isValidCell( i  , y   ) ) adyacentCells.push(this.cells[ i ][ y ]) ;
+                // if ( this.isValidCell( i  , y-1 ) ) adyacentCells.push(this.cells[ i ][y-1]) ;
+                // if ( this.isValidCell( i  , y+1 ) ) adyacentCells.push(this.cells[ i ][y+1]) ;
+
+
+
+
+
+
+                return adyacentCells;
             };
 
 
@@ -164,13 +311,16 @@
 
 
             Board.prototype.isValidCell = function(x, y) {
-                return ( (x >= 0 && x < this.size) &&  (y >= 0 && y<this.size));
+                var result = ( (x >= 0 && x < this.size) &&  (y >= 0 && y<this.size));
+                return result;
             };
 
             Board.prototype.initGame = function() {
                 this.addBombs();
                 this.addBoardGuide();
             };
+
+
 
             var game = new Board($scope.boardSize);
             game.initGame();
@@ -179,8 +329,20 @@
 
         };
 
+        $scope.printBoard = function() {
+            for(var i = 0; i  < $scope.board.cells.length; i++ ) {
+                var line = '';
 
-        $scope.board = new $scope.Buscaminas(14);
+                for(var j = 0; j < $scope.board.cells.length; j++) {
+                    line = line + "  " + $scope.board.cells[i][j].value;
+
+                }
+                console.log(line);
+
+            }
+        };
+
+        $scope.board = new $scope.Buscaminas(20);
         //$scope.board
 
 

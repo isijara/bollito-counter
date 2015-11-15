@@ -11,6 +11,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r73/three.min.js"></script>
 
   <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css">
+  <link rel="stylesheet" href="css/buscaminas.css">
 
   <title>Bollito</title>
 </head>

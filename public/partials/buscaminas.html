@@ -2,8 +2,8 @@
         <table class="table cointainer-fluid">
 
             <tr ng-repeat="cells in board.cells">
-                <td  style="width:{{cellWidth}}%" ng-repeat="cell in cells" class="btn btn-default" ng-click="cell.play('p1') ">
-                        <span ng-hide="cell.blocked" >
+                <td  style="width:{{cellWidth}}%;" ng-repeat="cell in cells" ng-class="cell.classType"  ng-disabled="!cell.isBomb && !cell.blocked" class="btn " ng-click="board.playCell(cell, 'p1') ">
+                        <span ng-hide="cell.blocked" ng-class="cell.fontColor" >
                             {{cell.label || cell.value}}
                         </span>
 
