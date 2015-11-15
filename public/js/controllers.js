@@ -214,91 +214,29 @@
             };
 
             Board.prototype.getAdyacentCells = function(cell) {
+                var self = this;
                 var adyacentCells = [];
                 var i = cell.getCoordinateX();
                 var y = cell.getCoordinateY();
                 var celda = {};
 
-
-                if ( this.isValidCell( i+1, y   ) ) {
-                        celda = this.cells[i+1][ y ];
+                var addValidAdyacentCell = function  (coordI, coordY) {
+                    if( self.isValidCell( coordI, coordY ) ) {
+                        celda = self.cells[coordI][ coordY ];
                         adyacentCells.push(celda) ;
-
                     }
+                };
 
-                if ( this.isValidCell( i+1, y   ) ) {
-                    celda = this.cells[i+1][ y ];
-                    adyacentCells.push(celda) ;
+                addValidAdyacentCell( i+1, y   );
+                addValidAdyacentCell( i+1, y+1 );
+                addValidAdyacentCell( i+1, y-1 );
 
-                }
+                addValidAdyacentCell( i  , y-1 );
+                addValidAdyacentCell( i  , y+1 );
 
-                if ( this.isValidCell( i+1, y+1 ) ) {
-                    celda = this.cells[i+1][y+1];
-                    adyacentCells.push(celda);
-                }
-
-
-                if ( this.isValidCell( i+1, y-1 ) )  {
-                    celda = this.cells[i+1][y-1];
-                    adyacentCells.push(celda);
-                }
-
-                if ( this.isValidCell( i  , y-1 ) ) {
-                    celda = this.getCell( i , y-1 );
-                    adyacentCells.push(celda);
-
-                }
-
-                if ( this.isValidCell( i  , y+1 ) ) {
-                    celda = this.getCell( i , y+1 );
-                    adyacentCells.push(celda);
-                }
-
-                if ( this.isValidCell( i-1  , y+1   ) ) {
-                    celda = this.cells[ i-1 ][ y+1 ];
-                    adyacentCells.push(celda);
-                 }
-
-
-                if ( this.isValidCell( i-1  , y-1   ) ) {
-                    celda = this.cells[ i-1 ][ y-1 ];
-                    adyacentCells.push( celda) ;
-                }
-
-                if ( this.isValidCell( i-1  , y   ) ) {
-                    celda = this.cells[i-1][ y ];
-
-                    if(celda === undefined)
-                        console.log('undefined');
-
-                    adyacentCells.push(celda) ;
-                }
-
-                // if ( this.isValidCell( i+1, y   ) ) adyacentCells.push(this.cells[i+1][ y ]) ;
-                // if ( this.isValidCell( i+1, y+1 ) ) adyacentCells.push(this.cells[i+1][y+1]) ;
-                // if ( this.isValidCell( i+1, y-1 ) ) adyacentCells.push(this.cells[i+1][y-1]) ;
-
-                // if ( this.isValidCell( i  , y-1 ) ) adyacentCells.push(this.cells[ i ][y-1]) ;
-                // if ( this.isValidCell( i  , y+1 ) ) adyacentCells.push(this.cells[ i ][y+1]) ;
-
-
-                // if ( this.isValidCell( i-1  , y+1   ) ) adyacentCells.push(this.cells[ i-1 ][ y+1 ]) ;
-                // if ( this.isValidCell( i-1  , y-1   ) ) adyacentCells.push(this.cells[ i-1 ][ y-1 ]) ;
-                // if ( this.isValidCell( i-1  , y   ) ) adyacentCells.push(this.cells[i-1][ y ]) ;
-
-
-                /********/
-                // if ( this.isValidCell( i+1, y   ) ) adyacentCells.push(this.cells[i+1][ y ]) ;
-                // if ( this.isValidCell( i+1, y+1 ) ) adyacentCells.push(this.cells[i+1][y+1]) ;
-                // if ( this.isValidCell( i-1, y   ) ) adyacentCells.push(this.cells[i-1][ y ]) ;
-                // if ( this.isValidCell( i  , y   ) ) adyacentCells.push(this.cells[ i ][ y ]) ;
-                // if ( this.isValidCell( i  , y-1 ) ) adyacentCells.push(this.cells[ i ][y-1]) ;
-                // if ( this.isValidCell( i  , y+1 ) ) adyacentCells.push(this.cells[ i ][y+1]) ;
-
-
-
-
-
+                addValidAdyacentCell( i-1, y+1 );
+                addValidAdyacentCell( i-1, y-1 );
+                addValidAdyacentCell( i-1, y   );
 
                 return adyacentCells;
             };
