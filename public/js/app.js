@@ -1,4 +1,4 @@
-var app = angular.module('bollito', ['ngRoute', 'appControllers', 'appServices']);
+var app = angular.module('bollito', ['ngRoute', 'appControllers', 'appServices', 'btford.socket-io']);
 
 app.config(['$routeProvider', function($routeProvider) {
 
