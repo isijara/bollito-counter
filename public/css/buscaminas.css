@@ -1,18 +1,29 @@
 .green {
-    color:#83b35b!important;
+    color:#006600!important;
     font-weight: bold;
 }
 
 .red {
-  color:#e51616!important;
-  font-weight: bold;
+    color:#e51616!important;
+    font-weight: bold;
 }
 
 .blue {
-  color:#0033CC!important;
-  font-weight: bold;
+    color:#0033CC!important;
+    font-weight: bold;
 }
 
 .water {
     color:#5bc0de!important;
 }
+
+
+.land {
+    color:#f0ad4e!important;
+}
+
+.black {
+    color:#000000!important;
+    font-weight: bold;
+}
+
