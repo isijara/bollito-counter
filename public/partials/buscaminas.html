@@ -1,29 +1,40 @@
-    <div>
-        <table class="table cointainer-fluid">
+<div>
+    <div class="row">
+        <div class="col-md-9">
+            <table class="table cointainer-fluid">
 
-            <tr ng-repeat="cells in board.cells">
-                <td  style="width:{{cellWidth}}%;" ng-repeat="cell in cells" ng-class="cell.classType"  ng-disabled="!cell.isBomb && !cell.blocked" class="btn " ng-click="board.playCell(cell, 'p1') ">
-                        <span ng-hide="cell.blocked" ng-class="cell.fontColor" >
-                            {{cell.label || cell.value}}
-                        </span>
+                <tr ng-repeat="cells in board.cells">
+                    <td  style="width:{{cellWidth}}%;" ng-repeat="cell in cells" ng-class="cell.classType"  ng-disabled="!cell.isBomb && !cell.blocked" class="btn " ng-click="board.playCell(cell, player);sendBoard(); ">
+                            <span ng-hide="cell.blocked" ng-class="cell.fontColor" >
+                                {{cell.label || cell.value}}
+                            </span>
 
-                        <span ng-hide="!cell.blocked" >
-                            ·
-                        </span>
-                </td>
-            </tr>
-        </table>
+                            <span ng-hide="!cell.blocked" >
+                                ·
+                            </span>
+                    </td>
+                </tr>
+            </table>
+        </div>
 
-        <!--<div ng-repeat="cells in board.cells" class="col-md-12 btn-group" role="group">
+        <div class="col-md-3">
+            <p>
+                Marcador
+            </p>
 
-            <button  ng-repeat="cell in cells" class="row col-xs-1 col-md-1 btn btn-lg btn-default" ng-click="cell.play('p1') ">
-                        <span ng-hide="cell.blocked" >
-                            {{cell.label || cell.value}}
-                        </span>
+            <p>
+                Bombas {{board.totalBombs}}
+            </p>
 
-                        <span ng-hide="!cell.blocked" >
-                            ·
-                        </span>
-            </button>
-        </div>-->
+            <p>
+                Player 1: {{players.p1.totalPoints}}
+            </p>
+
+            <p>
+                Player 2: {{players.p2.totalPoints}}
+            </p>
+        </div>
     </div>
+
+
+</div>

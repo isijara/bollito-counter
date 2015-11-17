@@ -43,9 +43,26 @@
     }]);
 
 
-    bollitoController.controller('buscaminasController', ['$scope', '$http', function ($scope, $http) {
+    bollitoController.controller('buscaminasController', ['$scope', '$http', 'mySocket', function ($scope, $http, socket) {
+
 
         window.scope = $scope;
+
+        $scope.player = '';
+
+         $scope.players = {
+                'p1': {
+                    nick: '',
+                    totalPoints : 0
+                },
+
+                'p2': {
+                    nick: '',
+                    totalPoints : 0
+                }
+
+            };
+
 
 
 
@@ -55,6 +72,8 @@
             var self = this;
             $scope.boardSize = size;
             $scope.cellWidth = 100/$scope.boardSize;
+
+
 
             $scope.unlockCell = function  (cell) {
                 cell.blocked = false;
@@ -68,11 +87,11 @@
                 this.blocked        = true;
                 this.coordinateX    = coordinateX;
                 this.coordinateY    = coordinateY;
-                this.classType      = 'btn-default';
+                this.classType      = 'btn-info';
                 this.fontColor      = '';
+            };
 
-
-                Cell.prototype.setBomb = function () {
+            Cell.prototype.setBomb = function () {
                         this.value = 0;
                         this.label = '@';
                         this.isBomb = true;
@@ -94,12 +113,15 @@
                 Cell.prototype.play = function(player) {
                     this.player = player;
                     this.blocked = false;
-                    if(this.getValue() === 0 && !this.isBomb) {
-                        this.classType = 'btn-info';
+                    if(!this.isBomb) { //this.getValue() === 0 &&
+                        this.classType = 'btn-warning';
                     }
 
                     if(this.isBomb && player == 'p1') {
                         this.classType = 'btn-danger';
+                    }
+                    if(this.isBomb && player == 'p2') {
+                        this.classType = 'btn-primary';
                     }
 
                     this.setFontColor();
@@ -119,11 +141,9 @@
                 Cell.prototype.setFontColor = function() {
 
                     if(!this.isBomb && this.value === 0) {
-                        this.fontColor = 'water';
+                        this.fontColor = 'land';
                     }
                     switch(this.value) {
-
-
                         case 1:
                             this.fontColor = 'blue';
                             break;
@@ -134,22 +154,20 @@
                             this.fontColor = 'red';
                             break;
                         case 4:
-                            this.fontColor = 'blue';
+                            this.fontColor = 'black';
                             break;
                         case 5:
                             this.fontColor = 'blue';
                             break;
-
                     }
                 };
-            };
 
 
             var Board = function(size) {
                 var self = this;
                     self.size = size;
                     self.cells = [];
-                    self.totalBombs = 49;//(self.size*self.size/8);
+                    self.totalBombs = 51;//(self.size*self.size/8);
 
                 for(var i=0; i<self.size; i++) {
                     self.cells[i] = [];
@@ -190,8 +208,11 @@
             };
 
             Board.prototype.playCell = function(cell, player) {
-                var x = cell.getCoordinateX(),
-                    y = cell.getCoordinateY();
+                var x = cell.coordinateX,
+                    y = cell.coordinateY;
+
+
+
 
                 if (this.isValidCell(x, y)) {
                     if(cell.blocked)
@@ -200,18 +221,27 @@
                             var cells = this.getAdyacentCells(cell);
                             for(var index in cells) {
                                 var adyacentCell = cells[index];
-                                if (adyacentCell.getValue() === 0)
+                                if (adyacentCell.getValue() === 0) {
                                     this.playCell(adyacentCell, player);
+                                } else {
+                                    adyacentCell.play(player);
+                                }
                             }
 
-                        } else
+                        } else {
                             cell.play(player);
+
+                            this.totalBombs--;
+                            $scope.players[player].totalPoints++;
+
+                        }
+
                 }
+
+
             };
 
-            Board.prototype.getCell = function(x,y) {
-                return this.cells[x][y];
-            };
+
 
             Board.prototype.getAdyacentCells = function(cell) {
                 var self = this;
@@ -273,15 +303,67 @@
 
                 for(var j = 0; j < $scope.board.cells.length; j++) {
                     line = line + "  " + $scope.board.cells[i][j].value;
-
                 }
                 console.log(line);
-
             }
         };
 
-        $scope.board = new $scope.Buscaminas(20);
-        //$scope.board
+        $scope.replicateBoard = function(board) {
+            for(var i = 0; i < $scope.board.cells.length; i++) {
+                for(var j = 0; j < $scope.board.cells.length; j++) {
+                    $scope.board.cells[i][j].player         = board.cells[i][j].player;
+                    $scope.board.cells[i][j].value          = board.cells[i][j].value;
+                    $scope.board.cells[i][j].label          = board.cells[i][j].label;
+                    $scope.board.cells[i][j].isBomb         = board.cells[i][j].isBomb;
+
+                    $scope.board.cells[i][j].blocked        = board.cells[i][j].blocked;
+
+                    $scope.board.cells[i][j].coordinateX    = board.cells[i][j].coordinateX;
+                    $scope.board.cells[i][j].coordinateY    = board.cells[i][j].coordinateY;
+                    $scope.board.cells[i][j].classType      = board.cells[i][j].classType;
+                    $scope.board.cells[i][j].fontColor      = board.cells[i][j].fontColor;
+                }
+            }
+        };
+
+        $scope.sendBoard = function() {
+            var gameData = {
+                gameBoard : $scope.board,
+                totalPointsP1: $scope.players['p1'].totalPoints,
+                totalPointsP2: $scope.players['p2'].totalPoints
+            };
+
+            socket.emit('movement', gameData);
+        };
+
+        socket.on('initGame', function (gameData) {
+            console.log('initGame');
+            $scope.board = new $scope.Buscaminas(16);
+            socket.emit('setGameBoard', $scope.board);
+            console.log('board', $scope.board);
+            $scope.player = gameData.player;
+            $scope.players['p1'].totalPoints = 0;
+            $scope.players['p2'].totalPoints = 0;
+        });
+
+
+
+        socket.on('joinGame', function (gameData) {
+
+            $scope.board = new $scope.Buscaminas(16);
+            $scope.replicateBoard(gameData.gameBoard);
+            $scope.player = 'p2';
+        });
+
+        socket.on('rivalsMove', function (gameData) {
+            console.log('acepto movimiento rival');
+            $scope.replicateBoard(gameData.gameBoard);
+            $scope.players['p1'].totalPoints = gameData.totalPointsP1;
+            $scope.players['p2'].totalPoints = gameData.totalPointsP2;
+            $scope.board.totalBombs = 51 - (gameData.totalPointsP1 + gameData.totalPointsP2);
+        });
+
+
 
 
     }]);
